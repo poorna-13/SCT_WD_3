@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #c77bc9;
+        margin: 0;
+        flex-direction: column;
+    }
+    .game-status {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    #current-player {
+        font-weight: bold; 
+    }
+    #game-result {
+        font-size: 24px; 
+        font-weight: bold; 
+    }
+    .winner {
+        color: rgb(46, 145, 46); 
+    }
+    .game-container {
+        text-align: center;
+        background-color: #ece56b;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgb(137, 2, 161);
+        margin-top: 20px;
+    }
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+        gap: 5px;
+        justify-content: center;
+    }
+    .cell {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid #0f0f0f;
+        font-size: 36px;
+        cursor: pointer;
+        background-color: #edf1b7;
+    }
+    .cell.taken {
+        pointer-events: none;
+    }
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #630472;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #a50fb5;
+    }
+  </style>
+</head>
+<body>
+    <div class="game-status">
+        <p><b>Current Player: </b><span id="current-player">X</span></p>
+        <p id="game-result"></p>
+      </div>
+  <div class="game-container">
+    <h1>Tic-Tac-Toe</h1>
+    <div class="board" id="board">
+      <div class="cell" data-cell="0"></div>
+      <div class="cell" data-cell="1"></div>
+      <div class="cell" data-cell="2"></div>
+      <div class="cell" data-cell="3"></div>
+      <div class="cell" data-cell="4"></div>
+      <div class="cell" data-cell="5"></div>
+      <div class="cell" data-cell="6"></div>
+      <div class="cell" data-cell="7"></div>
+      <div class="cell" data-cell="8"></div>
+    </div>
+    <button id="reset-button">Restart Game</button>
+  </div>
+  <script>
+    let currentPlayer = 'X';
+    let gameBoard = ['', '', '', '', '', '', '', '', ''];
+    let gameActive = true;
+
+    const currentPlayerText = document.getElementById('current-player');
+    const cells = document.querySelectorAll('.cell');
+    const gameResult = document.getElementById('game-result');
+    const resetButton = document.getElementById('reset-button');
+
+    cells.forEach(cell => {
+        cell.addEventListener('click', handleCellClick);
+    });
+
+    resetButton.addEventListener('click', resetGame);
+
+    function handleCellClick(event) {
+        const cellIndex = event.target.getAttribute('data-cell');
+  
+    if (gameBoard[cellIndex] !== '' || !gameActive) return; 
+        gameBoard[cellIndex] = currentPlayer;
+        event.target.textContent = currentPlayer;
+        event.target.classList.add('taken');
+
+    if (checkWinner()) {
+        gameResult.textContent = `${currentPlayer} Wins!`;
+        gameResult.classList.add('winner');
+        gameActive = false;
+        return;
+        }
+
+    if (gameBoard.every(cell => cell !== '')) {
+        gameResult.textContent = "It's a Draw!";
+        gameResult.classList.remove('winner');
+        gameActive = false;
+        return;
+        }
+
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    currentPlayerText.textContent = currentPlayer;
+    }
+
+    function checkWinner() {
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        return winConditions.some(([a, b, c]) => {
+        return gameBoard[a] === currentPlayer && gameBoard[b] === currentPlayer && gameBoard[c] === currentPlayer;
+        });
+    }
+
+    function resetGame() {
+        gameBoard = ['', '', '', '', '', '', '', '', ''];
+        gameActive = true;
+        currentPlayer = 'X';
+        currentPlayerText.textContent = currentPlayer;
+        gameResult.textContent = '';
+        gameResult.classList.remove('winner');
+
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('taken');
+        });
+    }
+    </script>
+</body>
+</html>
